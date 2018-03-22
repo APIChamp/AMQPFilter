@@ -1,0 +1,50 @@
+<!-- This type defines the filter configuration data for the Jabber filter
+	which sends an Instant message to an account on Google Talk "class" - The
+	filter classname. "fromEmailAddress" - The email address of the person sending
+	the instant message "password" - Password of the person sending the instant
+	message "resourceName" - Unique resource name "toEmailaddress" - The email
+	address of the person receiving the instant message "messageStr" - The content
+	of the message -->
+
+<entityStoreData>
+	<entityType name="AMQPSyncRequestReplyFilter" extends="Filter">
+		<constant name="class" type="string" value="com.axway.amqp.AMQPSyncRequestReplyFilter" />
+		<field name="hostname" type="string" cardinality="1" />
+		<field name="port" type="string" cardinality="1" default="5672" />
+		<field name="vhost" type="string" cardinality="1" default="/" />
+		<field name="deliveryMode" type="string" cardinality="1" default="Persistent" />
+		<field name="exchangeName" type="string" cardinality="1" />
+		<field name="requestQueueName" type="string" cardinality="1" />
+		<field name="replyQueueType" type="string" cardinality="1" default="Use named queue" />
+		<field name="replyQueueName" type="string" cardinality="1" />
+		<field name="contentType" type="string" cardinality="1" default="application/json" />
+		<field name="timeout" type="string" cardinality="1" default="1000"/>
+		<field name="username" type="string" cardinality="1" />
+		<field name="password" type="encrypted" cardinality="1" />
+		<field name="attributeName" type="string" cardinality="1"/>
+		<field name="user" type="string" cardinality="1" />		
+		<field name="userRole" type="string" cardinality="1" />		
+	</entityType>
+
+	<!-- Internationalization for logging / audit trail -->
+	<entity xmlns="http://www.vordel.com/2005/06/24/entityStore"
+		type="InternationalizationFilter">
+		<key type="Internationalization">
+			<id field="name" value="Internationalization Default" />
+		</key>
+		<fval name="type">
+			<value>AMQPFilter</value>
+		</fval>
+		<fval name="logFatal">
+			<value>Error in the AMQP  Error:
+				${circuit.exception}</value>
+		</fval>
+		<fval name="logFailure">
+			<value>Failed in the AMQP filter</value>
+		</fval>
+		<fval name="logSuccess">
+			<value>Success in the AMQP filter</value>
+		</fval>
+	</entity>
+
+</entityStoreData>

@@ -1,0 +1,60 @@
+<!-- This type defines the filter configuration data for the Jabber filter
+	which sends an Instant message to an account on Google Talk "class" - The
+	filter classname. "fromEmailAddress" - The email address of the person sending
+	the instant message "password" - Password of the person sending the instant
+	message "resourceName" - Unique resource name "toEmailaddress" - The email
+	address of the person receiving the instant message "messageStr" - The content
+	of the message -->
+
+<entityStoreData>
+	 <entityType name="AMQP" extends="Entity">
+      <constant name="_version" type="integer" value="4"/>
+      <componentType name="Property"/>
+         <field cardinality="1" isKey="true" name="name" type="string"/>
+         <field cardinality="1" default="com.vordel.ama.jndi.InitialContextFactory" name="initialContextFactory" type="string"/>
+         <field cardinality="1" default="local" name="hostname" type="string"/>
+         <field cardinality="1" default="5672" name="port" type="string"/>
+         <!-- Rabbit MQ cluster host and port details apart from the one above -->
+         <field cardinality="1" name="fallbackhostport" type="string"/>
+         <field cardinality="1" name="virtualhost" type="string"/>
+         <field cardinality="1" name="userName" type="string"/>
+         <field cardinality="1" name="password" type="encrypted"/>
+         <!-- Set the auto recovery in case of failure, default is true -->
+         <field cardinality="?" default="true" name="autorecovery" type="boolean"/>
+         <!-- Set the auto recovery retry to 5 seconds -->
+         <field cardinality="?" default="5000" name="networkrecoveryinterval" type="string"/>
+         <!-- Set the auto recovery of topology. Topology recovery involves recovery of exchanges, queues, bindings and consumers -->
+         <field cardinality="?" default="true" name="topologyrecovery" type="boolean"/>
+         <!-- serviceType.
+              Used to specify the type of predefined AMQP provider to define
+     		 RabbitMQ: 
+     		     Standard AMQP provider (default)
+         -->
+         <field cardinality="?" default="RabbitMQ" name="serviceType" type="string"/>
+         <field cardinality="*" name="SSLTrustedCerts" type="^Certificate"/>
+         <field cardinality="?" name="SSLCertificate" type="^Certificate"/>
+         <field cardinality="?" name="SSLCipherSuite" type="string"/>
+  </entityType>   
+
+	<!-- Internationalization for logging / audit trail -->
+	<entity xmlns="http://www.vordel.com/2005/06/24/entityStore"
+		type="InternationalizationFilter">
+		<key type="Internationalization">
+			<id field="name" value="Internationalization Default" />
+		</key>
+		<fval name="type">
+			<value>AMQPFilter</value>
+		</fval>
+		<fval name="logFatal">
+			<value>Error in the AMQP  Error:
+				${circuit.exception}</value>
+		</fval>
+		<fval name="logFailure">
+			<value>Failed in the AMQP filter</value>
+		</fval>
+		<fval name="logSuccess">
+			<value>Success in the AMQP filter</value>
+		</fval>
+	</entity>
+
+</entityStoreData>

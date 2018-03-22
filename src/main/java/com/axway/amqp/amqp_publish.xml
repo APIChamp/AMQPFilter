@@ -1,0 +1,32 @@
+<ui>
+	<panel columns="1">
+		<NameAttribute />
+        <group label="AMQP_CONNECTION_SETTINGS_LABEL" columns="2" span="2"
+			fill="false">
+			<TextAttribute field="hostname" label="hostname_LABEL"
+				displayName="hostname_LABEL_DISP_NAME" />
+			<TextAttribute field="port" label="port_LABEL"
+				displayName="port_LABEL_DISP_NAME" />
+			<TextAttribute field="username" label="username_LABEL"
+				displayName="username_LABEL_DISP_NAME" />
+			<PasswordAttribute field="password" label="password_LABEL"
+				displayName="password_LABEL_DISP_NAME" />
+		</group>
+		
+		<group label="AMQP_PUBLISH_SETTINGS_LABEL" columns="2" span="2"
+			fill="false">
+			<ComboAttribute field="deliveryMode"
+				label="AMQP_CONSUMER_DESTINATION_TYPE_LABEL" contentSource="com.axway.amqp.AMQPPublishFilterPage.deliveryModes"
+				includeBlank="false" readOnly="true" required="true" stretch="true" />
+			<TextAttribute field="exchangeName" label="exchangeName_LABEL"
+				displayName="exchangeName_LABEL_DISP_NAME" />
+			<TextAttribute field="publishQueueName" label="publishQueueName_LABEL"
+				displayName="publishQueueName_LABEL_DISP_NAME" />
+			<TextAttribute field="contentType" label="contentType_LABEL"
+				displayName="contentType_LABEL_DISP_NAME" />
+			<TextAttribute field="attributeName" label="AMQP_MESSAGE_ATTRIBUTE_NAME"
+				required="false" clearValueWhenDisabled="false" />
+		</group>		
+
+	</panel>
+</ui>

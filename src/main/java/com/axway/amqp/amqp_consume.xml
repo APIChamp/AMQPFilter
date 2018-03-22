@@ -1,0 +1,26 @@
+<ui>
+	<panel columns="1">
+		<NameAttribute />
+        <group label="AMQP_CONNECTION_SETTINGS_LABEL" columns="2" span="2"
+			fill="false">
+			<TextAttribute field="hostname" label="hostname_LABEL"
+				displayName="hostname_LABEL_DISP_NAME" />
+			<TextAttribute field="port" label="port_LABEL"
+				displayName="port_LABEL_DISP_NAME" />
+			<TextAttribute field="username" label="username_LABEL"
+				displayName="username_LABEL_DISP_NAME" />
+			<PasswordAttribute field="password" label="password_LABEL"
+				displayName="password_LABEL_DISP_NAME" />
+		</group>
+		
+		<group label="AMQP_CONSUME_SETTINGS_LABEL" columns="2" span="2"
+			fill="false">
+			
+			<TextAttribute field="queueName" required="true" label="queueName_LABEL"
+				displayName="queueName_LABEL_DISP_NAME" />
+			<TextAttribute field="correlationid" includeBlank="false" label="correlationid_LABEL"
+				clearValueWhenDisabled="false" default = "0" displayName="correlationid_LABEL_DISP_NAME" />			
+		</group>		
+
+	</panel>
+</ui>

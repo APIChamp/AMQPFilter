@@ -1,0 +1,16 @@
+com\axway\amqp\AMQPSyncRequestReplyProcessor$2.class
+com\axway\amqp\AMQPSyncRequestReplyFilterUI.class
+com\axway\amqp\AMQPConsumeFilterPage.class
+com\axway\amqp\AMQPSyncRequestReplyProcessor$1.class
+com\axway\amqp\AMQPPublishFilter.class
+com\axway\amqp\AMQPSyncRequestReplyProcessor.class
+com\axway\amqp\AMQPConsumeFilter.class
+com\axway\amqp\AMQPPublishProcessor.class
+com\axway\amqp\AMQPSyncRequestReplyFilter.class
+com\axway\amqp\AMQPConsumeFilterUI.class
+com\axway\amqp\AMQPPublishFilterPage.class
+com\axway\amqp\AMQPSyncRequestReplyFilterPage.class
+com\axway\amqp\AMQPConsumeProcessor.class
+com\axway\amqp\AMQPConsumeProcessor$1.class
+com\axway\amqp\AMQPLoadableModule.class
+com\axway\amqp\AMQPPublishFilterUI.class

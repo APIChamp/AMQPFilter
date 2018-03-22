@@ -1,0 +1,36 @@
+<!-- This type defines the Loadable module for AMQP connection creation
+	that creates one time connection-->
+
+<entityStoreData>
+	<entityType name="AMQPLoadableModule" extends="NamedLoadableModule">
+    <constant name="_version" type="integer" value="0"/>
+    <constant name="class" type="string" 
+      value="com.axway.amqp.AMQPLoadableModule"/>
+    <field name="hostname" type="string" cardinality="1" default = "localhost"/>
+	<field name="port" type="string" cardinality="1" default="5672" />
+	<field name="username" type="string" cardinality="1" default="guest"/>
+	<field name="password" type="encrypted" cardinality="1" default ="guest"/>
+    </entityType>
+
+	<!-- Internationalization for logging / audit trail -->
+	<entity xmlns="http://www.vordel.com/2005/06/24/entityStore"
+		type="InternationalizationFilter">
+		<key type="Internationalization">
+			<id field="name" value="Internationalization Default" />
+		</key>
+		<fval name="type">
+			<value>AMQP Publish Filter</value>
+		</fval>
+		<fval name="logFatal">
+			<value>Error in the AMQP Publish :
+				${circuit.exception}</value>
+		</fval>
+		<fval name="logFailure">
+			<value>Failed in the AMQP Publish filter</value>
+		</fval>
+		<fval name="logSuccess">
+			<value>Success in the AMQP Publish filter</value>
+		</fval>
+	</entity>
+
+</entityStoreData>

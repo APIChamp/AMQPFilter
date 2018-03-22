@@ -1,0 +1,7 @@
+<!-- This type defines the filter configuration data for the AMQP Publish filter
+	which publish message to defined queue -->
+
+<panel columns="2">
+ <TextAttribute field="name" label="PROPNAME_LABEL" required="true"/>
+ <TextAttribute field="value" label="PROPVALUE_LABEL" required="true"/>
+</panel>

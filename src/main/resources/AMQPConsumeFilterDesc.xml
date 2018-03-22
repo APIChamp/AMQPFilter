@@ -1,0 +1,38 @@
+<!-- This type defines the filter configuration data for the AMQP Publish filter
+	which publish message to defined queue -->
+
+<entityStoreData>
+	<entityType name="AMQPConsumeFilter" extends="Filter">
+		<constant name="class" type="string" value="com.axway.amqp.AMQPConsumeFilter" />		
+		<field name="hostname" type="string" cardinality="1" />
+		<field name="port" type="string" cardinality="1" default="5672" />
+		<field name="username" type="string" cardinality="1" />
+		<field name="password" type="encrypted" cardinality="1" />		
+		<field name="deliveryMode" type="string" cardinality="1" default="Persistent" />
+		<field name="queueName" type="string" cardinality="1" />
+		<field name="correlationid" type="string" cardinality="1" default = "0"/>		
+		<field name="timeout" type="string" cardinality="1" default="1000"/>	
+	</entityType>
+
+	<!-- Internationalization for logging / audit trail -->
+	<entity xmlns="http://www.vordel.com/2005/06/24/entityStore"
+		type="InternationalizationFilter">
+		<key type="Internationalization">
+			<id field="name" value="Internationalization Default" />
+		</key>
+		<fval name="type">
+			<value>AMQP Publish Filter</value>
+		</fval>
+		<fval name="logFatal">
+			<value>Error in the AMQP Publish :
+				${circuit.exception}</value>
+		</fval>
+		<fval name="logFailure">
+			<value>Failed in the AMQP Publish filter</value>
+		</fval>
+		<fval name="logSuccess">
+			<value>Success in the AMQP Publish filter</value>
+		</fval>
+	</entity>
+
+</entityStoreData>

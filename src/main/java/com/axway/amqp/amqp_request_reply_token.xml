@@ -1,0 +1,49 @@
+<ui>
+	<panel columns="1">
+		<NameAttribute />
+
+		<group label="AMQP_CONNECTION_SETTINGS_LABEL" columns="2" span="2"
+			fill="false">
+			<TextAttribute field="hostname" label="hostname_LABEL"
+				displayName="hostname_LABEL_DISP_NAME" />
+			<TextAttribute field="port" label="port_LABEL"
+				displayName="port_LABEL_DISP_NAME" />
+			<TextAttribute field="vhost" label="vhost_LABEL"
+				displayName="vhost_LABEL_DISP_NAME" />	
+			<TextAttribute field="username" label="username_LABEL"
+				displayName="username_LABEL_DISP_NAME" />
+			<PasswordAttribute field="password" label="password_LABEL"
+				displayName="password_LABEL_DISP_NAME" />
+		</group>
+
+		<group label="AMQP_REQUEST_SETTINGS_LABEL" columns="2" span="2"
+			fill="false">
+			<ComboAttribute field="deliveryMode"
+				label="AMQP_CONSUMER_DESTINATION_TYPE_LABEL" contentSource="com.axway.amqp.AMQPSyncRequestReplyFilterPage.deliveryModes"
+				includeBlank="false" readOnly="true" required="true" stretch="true" />
+			<TextAttribute field="exchangeName" label="exchangeName_LABEL"
+				displayName="exchangeName_LABEL_DISP_NAME" />
+			<TextAttribute field="requestQueueName" label="requestQueueName_LABEL"
+				displayName="requestQueueName_LABEL_DISP_NAME" />
+			<TextAttribute field="contentType" label="contentType_LABEL"
+				displayName="contentType_LABEL_DISP_NAME" />
+			<TextAttribute field="userRole" label="userRole_LABEL"
+				displayName="userRole_LABEL_DISP_NAME" />
+			<TextAttribute field="user" label="user_LABEL"
+				displayName="user_LABEL_DISP_NAME" />		
+			<TextAttribute field="attributeName" label="AMQP_MESSAGE_ATTRIBUTE_NAME"
+				required="false" clearValueWhenDisabled="false" />
+            <text label="MESSAGE_PROPERTIES" readOnly="true"/>
+							
+		</group>
+
+		<group label="AMQP_REPLY_SETTINGS_LABEL" columns="2" span="2"
+			fill="false">
+			<ComboAttribute field="replyQueueType"
+				contentSource="com.axway.amqp.AMQPSyncRequestReplyFilterPage.replyQueueTypes"
+				includeBlank="false" readOnly="true" required="true" stretch="true" />
+			<TextAttribute field="replyQueueName" displayName="replyQueueName_LABEL_DISP_NAME" />
+		</group>
+
+	</panel>
+</ui>
