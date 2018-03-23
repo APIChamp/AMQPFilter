@@ -6,6 +6,7 @@ import java.security.GeneralSecurityException;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.TimeUnit;
 
 import com.rabbitmq.client.ConnectionFactory;
 import com.rabbitmq.client.Connection;
@@ -28,6 +29,7 @@ public class AMQPConsumeProcessor extends MessageProcessor {
 	private Selector<String> hostname;
 	private Selector<String> port;
 	private Selector<String> queueName;
+	private Selector<String> timeout;
 	private Selector<String> correlationid;
 	// private Selector<String> timeout;
 	private Selector<String> username;
@@ -58,6 +60,7 @@ public class AMQPConsumeProcessor extends MessageProcessor {
 		this.password = new String(passwordBytes);
 		this.username = new Selector<String>(entity.getStringValue("username"), String.class);
 		this.queueName = new Selector<String>(entity.getStringValue("queueName"), String.class);
+		this.timeout = new Selector<String>(entity.getStringValue("timeout"), String.class);
 		this.correlationid = new Selector<String>(entity.getStringValue("correlationid"), String.class);
 		this.port = new Selector<String>(entity.getStringValue("port"), String.class);
 
@@ -75,7 +78,7 @@ public class AMQPConsumeProcessor extends MessageProcessor {
 			this.connection = factory.newConnection("API Gateway - AMQP Consume");
 			// channel = connection.createChannel();
 		} catch (IOException | TimeoutException e) {
-			Trace.info("Error during factory.newConnection(): " + e);
+			Trace.info("Error during factory.newConnection(): " + e);			
 		}
 
 	}
@@ -98,13 +101,20 @@ public class AMQPConsumeProcessor extends MessageProcessor {
 
 			Trace.info("Consuming from named queue");
 			boolean autoAck;
-			 
+			
+			if (this.connection == null) {
+				Trace.error("No connection open. Aborting the circuit");
+				return false;
+			}
+			
+			
 			if (!this.connection.isOpen()) {
 				try {
 					Trace.info("No connection open. Creating new connection");
 					this.connection = factory.newConnection("API Gateway - AMQP Consume");
 				} catch (IOException | TimeoutException e) {
 					Trace.info("Error during factory.newConnection(): " + e);
+					return false;
 				}
 			}
 
@@ -151,7 +161,9 @@ public class AMQPConsumeProcessor extends MessageProcessor {
 			  }
 			});
 
-			String response = blockingQueue.take();
+			//String response = blockingQueue.take();
+			
+			String response = blockingQueue.poll((Integer.parseInt(this.timeout.getLiteral().trim())), TimeUnit.SECONDS);
 			Trace.info("Received: " + response);
 			message.put("amqp.msg", response);
 			consumeChannel.close();

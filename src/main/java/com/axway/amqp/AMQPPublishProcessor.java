@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.security.GeneralSecurityException;
 
 import java.util.concurrent.TimeoutException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
@@ -28,6 +30,9 @@ public class AMQPPublishProcessor extends MessageProcessor {
 
 	private Selector<String> hostname;
 	private Selector<String> port;
+	private Selector<String> vhost;
+	private Selector<String> user;
+	private Selector<String> userRole;
 	private Selector<String> exchangeName;
 	private Selector<String> publishQueueName;
 	// private Selector<String> timeout;
@@ -60,10 +65,12 @@ public class AMQPPublishProcessor extends MessageProcessor {
 		}
 		this.password = new String(passwordBytes);
 		this.username = new Selector<String>(entity.getStringValue("username"), String.class);
+		this.vhost = new Selector<String>(entity.getStringValue("vhost"), String.class);
 		this.exchangeName = new Selector<String>(entity.getStringValue("exchangeName"), String.class);
 		this.publishQueueName = new Selector<String>(entity.getStringValue("publishQueueName"), String.class);
 		this.port = new Selector<String>(entity.getStringValue("port"), String.class);
-
+		this.user = new Selector<String>(entity.getStringValue("user"), String.class);
+		this.userRole = new Selector<String>(entity.getStringValue("userRole"), String.class);
 		this.attributeName = new Selector<String>(entity.getStringValue("attributeName"), String.class);
 		this.contentType = new Selector<String>(entity.getStringValue("contentType"), String.class);
 
@@ -71,6 +78,7 @@ public class AMQPPublishProcessor extends MessageProcessor {
 		this.factory = new ConnectionFactory();
 		factory.setHost(this.hostname.getLiteral());
 		factory.setPort(Integer.parseInt(this.port.getLiteral().trim()));
+		factory.setVirtualHost(this.vhost.getLiteral());
 		if (this.username != null) {
 			factory.setUsername(this.username.getLiteral());
 			factory.setPassword(this.password);
@@ -92,28 +100,36 @@ public class AMQPPublishProcessor extends MessageProcessor {
 		String body = this.attributeName.substitute(message);
 
 		Trace.info("call Publish message");
-		return publishProcessor(corrId, body);
+		return publishProcessor(message, corrId, body);
 		
 	} // End of invoke
 
-	private boolean publishProcessor(String corrId, String body) {
+	private boolean publishProcessor(Message message, String corrId, String body) {
 
 		try {
 			Trace.info("Publishing");
-
+			
+			if (this.connection == null) {
+				Trace.error("No connection open. Aborting the circuit");
+				return false;
+			}
+			
 			if (!this.connection.isOpen()) {
 				try {
 					Trace.info("No connection open. Creating new connection");
-					this.connection = factory.newConnection("API Gateway One");
+					this.connection = factory.newConnection("API Gateway - AMQP Publish");
 				} catch (IOException | TimeoutException e) {
 					Trace.info("Error during factory.newConnection(): " + e);
+					return false;
 				}
 			}
 			Channel publishChannel = this.connection.createChannel();
 			Trace.info("Channel created");
-			
+			Map<String, Object> HOAccess = new HashMap<String, Object>();
+			HOAccess.put("user", this.user.substitute(message));
+			HOAccess.put("role", this.userRole.substitute(message));
 			AMQP.BasicProperties requestProps = new AMQP.BasicProperties.Builder().correlationId(corrId)
-					.contentType(this.contentType.getLiteral()).build();
+					.contentType(this.contentType.getLiteral()).headers(HOAccess).build();
 	    	
 			publishChannel.basicPublish(this.exchangeName.getLiteral(), this.publishQueueName.getLiteral(),
 					requestProps, body.getBytes("UTF-8"));

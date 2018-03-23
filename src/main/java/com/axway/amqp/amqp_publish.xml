@@ -24,6 +24,10 @@
 				displayName="publishQueueName_LABEL_DISP_NAME" />
 			<TextAttribute field="contentType" label="contentType_LABEL"
 				displayName="contentType_LABEL_DISP_NAME" />
+			<TextAttribute field="userRole" label="userRole_LABEL"
+				displayName="userRole_LABEL_DISP_NAME" />
+			<TextAttribute field="user" label="user_LABEL"
+				displayName="user_LABEL_DISP_NAME" />	
 			<TextAttribute field="attributeName" label="AMQP_MESSAGE_ATTRIBUTE_NAME"
 				required="false" clearValueWhenDisabled="false" />
 		</group>		

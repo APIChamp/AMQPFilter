@@ -18,6 +18,8 @@
 			
 			<TextAttribute field="queueName" required="true" label="queueName_LABEL"
 				displayName="queueName_LABEL_DISP_NAME" />
+			<TextAttribute field="timeout" required="true" label="timeout_LABEL"
+				displayName="timeout_LABEL_DISP_NAME" />	
 			<TextAttribute field="correlationid" includeBlank="false" label="correlationid_LABEL"
 				clearValueWhenDisabled="false" default = "0" displayName="correlationid_LABEL_DISP_NAME" />			
 		</group>		
