@@ -163,7 +163,7 @@ public class AMQPConsumeProcessor extends MessageProcessor {
 
 			//String response = blockingQueue.take();
 			
-			String response = blockingQueue.poll((Integer.parseInt(this.timeout.getLiteral().trim())), TimeUnit.SECONDS);
+			String response = blockingQueue.poll((Integer.parseInt(this.timeout.getLiteral().trim())), TimeUnit.MILLISECONDS);
 			Trace.info("Received: " + response);
 			message.put("amqp.msg", response);
 			consumeChannel.close();

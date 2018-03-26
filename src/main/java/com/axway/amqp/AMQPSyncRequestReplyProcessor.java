@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.TimeUnit;
 
 import com.rabbitmq.client.ConnectionFactory;
 import com.rabbitmq.client.Connection;
@@ -36,7 +37,7 @@ public class AMQPSyncRequestReplyProcessor extends MessageProcessor {
 	private Selector<String> exchangeName;
 	private Selector<String> requestQueueName;
 	private Selector<String> replyQueueName;
-	// private Selector<String> timeout;
+    private Selector<String> timeout;
 	private Selector<String> username;
 	private Selector<String> attributeName;
 	private Selector<String> contentType;
@@ -77,7 +78,8 @@ public class AMQPSyncRequestReplyProcessor extends MessageProcessor {
 		this.userRole = new Selector<String>(entity.getStringValue("userRole"), String.class);
 		this.attributeName = new Selector<String>(entity.getStringValue("attributeName"), String.class);
 		this.contentType = new Selector<String>(entity.getStringValue("contentType"), String.class);
-
+		this.timeout = new Selector<String>(entity.getStringValue("timeout"), String.class);
+		
 		// ConnectionFactory factory = new ConnectionFactory();
 		this.factory = new ConnectionFactory();
 		factory.setHost(this.hostname.getLiteral());
@@ -182,7 +184,12 @@ public class AMQPSyncRequestReplyProcessor extends MessageProcessor {
 				}
 			});
 
-			String response = blockingQueue.take();
+			
+			String response = blockingQueue.poll((Integer.parseInt(this.timeout.getLiteral().trim())), TimeUnit.MILLISECONDS);
+			if (response==null) {
+				response ="Timeout";
+			}
+			
 			Trace.info("[x] Sent correlationId " + corrId + "[x] Received: " + response);
 			message.put("amqp.msg", response);
 			consumeChannel.close();
@@ -235,7 +242,11 @@ public class AMQPSyncRequestReplyProcessor extends MessageProcessor {
 				}
 			});
 
-			String response = blockingQueue.take();
+			//String response = blockingQueue.take();
+			String response = blockingQueue.poll((Integer.parseInt(this.timeout.getLiteral().trim())), TimeUnit.MILLISECONDS);
+			if (response==null) {
+				response ="Timeout";
+			}
 			message.put("amqp.msg", response);
 
 			channel.close();

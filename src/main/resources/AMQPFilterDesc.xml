@@ -23,7 +23,7 @@
 		<field name="password" type="encrypted" cardinality="1" />
 		<field name="attributeName" type="string" cardinality="1"/>
 		<field name="user" type="string" cardinality="1" />		
-		<field name="userRole" type="string" cardinality="1" />		
+		<field name="userRole" type="string" cardinality="1" />					
 	</entityType>
 
 	<!-- Internationalization for logging / audit trail -->

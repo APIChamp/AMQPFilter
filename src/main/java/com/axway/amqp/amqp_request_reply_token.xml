@@ -43,6 +43,8 @@
 				contentSource="com.axway.amqp.AMQPSyncRequestReplyFilterPage.replyQueueTypes"
 				includeBlank="false" readOnly="true" required="true" stretch="true" />
 			<TextAttribute field="replyQueueName" displayName="replyQueueName_LABEL_DISP_NAME" />
+			<TextAttribute field="timeout" required="true" label="timeout_LABEL"
+				displayName="timeout_LABEL_DISP_NAME" />
 		</group>
 
 	</panel>
