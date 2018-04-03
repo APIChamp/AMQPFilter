@@ -88,7 +88,7 @@ public class AMQPPublishProcessor extends MessageProcessor {
 			this.connection = factory.newConnection("API Gateway - AMQP Publish");
 			// channel = connection.createChannel();
 		} catch (IOException | TimeoutException e) {
-			Trace.info("Error during factory.newConnection(): " + e);
+			Trace.debug("Error during factory.newConnection(): " + e);
 		}
 
 	}
@@ -99,7 +99,7 @@ public class AMQPPublishProcessor extends MessageProcessor {
 		String corrId = UUID.randomUUID().toString();
 		String body = this.attributeName.substitute(message);
 
-		Trace.info("call Publish message");
+		Trace.debug("call Publish message");
 		return publishProcessor(message, corrId, body);
 		
 	} // End of invoke
@@ -107,7 +107,7 @@ public class AMQPPublishProcessor extends MessageProcessor {
 	private boolean publishProcessor(Message message, String corrId, String body) {
 
 		try {
-			Trace.info("Publishing");
+			Trace.debug("Publishing");
 			
 			if (this.connection == null) {
 				Trace.error("No connection open. Aborting the circuit");
@@ -116,15 +116,15 @@ public class AMQPPublishProcessor extends MessageProcessor {
 			
 			if (!this.connection.isOpen()) {
 				try {
-					Trace.info("No connection open. Creating new connection");
+					Trace.debug("No connection open. Creating new connection");
 					this.connection = factory.newConnection("API Gateway - AMQP Publish");
 				} catch (IOException | TimeoutException e) {
-					Trace.info("Error during factory.newConnection(): " + e);
+					Trace.debug("Error during factory.newConnection(): " + e);
 					return false;
 				}
 			}
 			Channel publishChannel = this.connection.createChannel();
-			Trace.info("Channel created");
+			Trace.debug("Channel created");
 			Map<String, Object> HOAccess = new HashMap<String, Object>();
 			HOAccess.put("user", this.user.substitute(message));
 			HOAccess.put("role", this.userRole.substitute(message));
@@ -134,11 +134,11 @@ public class AMQPPublishProcessor extends MessageProcessor {
 			publishChannel.basicPublish(this.exchangeName.getLiteral(), this.publishQueueName.getLiteral(),
 					requestProps, body.getBytes("UTF-8"));
 
-			Trace.info("Message published");
+			Trace.debug("Message published");
 			publishChannel.close();
-			Trace.info("Channel closed");
+			Trace.debug("Channel closed");
 		} catch (IOException | TimeoutException e) {
-			Trace.info("Error during publish: " + e);
+			Trace.debug("Error during publish: " + e);
 			return false;
 		}
 

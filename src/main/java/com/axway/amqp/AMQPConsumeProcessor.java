@@ -78,7 +78,7 @@ public class AMQPConsumeProcessor extends MessageProcessor {
 			this.connection = factory.newConnection("API Gateway - AMQP Consume");
 			// channel = connection.createChannel();
 		} catch (IOException | TimeoutException e) {
-			Trace.info("Error during factory.newConnection(): " + e);			
+			Trace.debug("Error during factory.newConnection(): " + e);			
 		}
 
 	}
@@ -88,8 +88,8 @@ public class AMQPConsumeProcessor extends MessageProcessor {
 
 		String corrId = this.correlationid.substitute(message);
 		//String body = this.attributeName.substitute(message);
-		Trace.info("Correlation id : " + corrId);
-		Trace.info("call Consume message");
+		Trace.debug("Correlation id : " + corrId);
+		Trace.debug("call Consume message");
 		//return true;
 		return consumeProcessor(message, corrId );
 		
@@ -99,7 +99,7 @@ public class AMQPConsumeProcessor extends MessageProcessor {
 
 		try {
 
-			Trace.info("Consuming from named queue");
+			Trace.debug("Consuming from named queue");
 			boolean autoAck;
 			
 			if (this.connection == null) {
@@ -110,10 +110,10 @@ public class AMQPConsumeProcessor extends MessageProcessor {
 			
 			if (!this.connection.isOpen()) {
 				try {
-					Trace.info("No connection open. Creating new connection");
+					Trace.debug("No connection open. Creating new connection");
 					this.connection = factory.newConnection("API Gateway - AMQP Consume");
 				} catch (IOException | TimeoutException e) {
-					Trace.info("Error during factory.newConnection(): " + e);
+					Trace.debug("Error during factory.newConnection(): " + e);
 					return false;
 				}
 			}
@@ -121,7 +121,7 @@ public class AMQPConsumeProcessor extends MessageProcessor {
 			
 			
 			Channel consumeChannel = this.connection.createChannel();
-			Trace.info("Channel created");
+			Trace.debug("Channel created");
 			
 			final BlockingQueue<String> blockingQueue = new ArrayBlockingQueue<String>(1);
 			if (corrId.equals("0") || (corrId.isEmpty())){
@@ -129,10 +129,10 @@ public class AMQPConsumeProcessor extends MessageProcessor {
 			}
 			//	if (!corrId.equals("0")){
 			    autoAck = false;
-			//    Trace.info("AutoAcknowledgement set to false");
+			//    Trace.debug("AutoAcknowledgement set to false");
 		//	}else {
 	//			autoAck = true;
-	//			 Trace.info("AutoAcknowledgement set to true");
+	//			 Trace.debug("AutoAcknowledgement set to true");
 	//		}
 
 			consumeChannel.basicConsume(this.queueName.getLiteral(), autoAck, new DefaultConsumer(consumeChannel) {
@@ -140,22 +140,22 @@ public class AMQPConsumeProcessor extends MessageProcessor {
 				public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties,
 						byte[] body) throws IOException {					
 					if (!corrId.equals("0")) {
-					Trace.info("CorrelationId is : " + corrId);	
+					Trace.debug("CorrelationId is : " + corrId);	
 					if (properties.getCorrelationId().equals(corrId)) {
 						consumeChannel.basicAck(envelope.getDeliveryTag(), false);
 						blockingQueue.offer(new String(body, "UTF-8"));
-						Trace.info("Message with " + corrId + "  is consumed");	
+						Trace.debug("Message with " + corrId + "  is consumed");	
 					} else {
 						consumeChannel.basicNack(envelope.getDeliveryTag(), false, true);
 					}
 					
 				}
 					/*else { 
-					Trace.info("Consuming message without correlation");	
+					Trace.debug("Consuming message without correlation");	
 					consumeChannel.basicQos(1);
 					consumeChannel.basicAck(envelope.getDeliveryTag(), false);
 					blockingQueue.offer(new String(body, "UTF-8"));
-					Trace.info("Message consumed");	
+					Trace.debug("Message consumed");	
 				}*/
 					
 			  }
@@ -164,15 +164,15 @@ public class AMQPConsumeProcessor extends MessageProcessor {
 			//String response = blockingQueue.take();
 			
 			String response = blockingQueue.poll((Integer.parseInt(this.timeout.getLiteral().trim())), TimeUnit.MILLISECONDS);
-			Trace.info("Received: " + response);
+			Trace.debug("Received: " + response);
 			message.put("amqp.msg", response);
 			consumeChannel.close();
 
 		} catch (IOException | InterruptedException | TimeoutException e) {
-			Trace.info("Error during consume: " + e);
+			Trace.debug("Error during consume: " + e);
 			return false;
 		} catch (ShutdownSignalException e1) {
-			Trace.info("ShutdownSignalException during consume: " + e1);
+			Trace.debug("ShutdownSignalException during consume: " + e1);
 		}
 	
 		return true;

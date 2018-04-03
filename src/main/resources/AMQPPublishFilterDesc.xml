@@ -11,11 +11,10 @@
 		<field name="deliveryMode" type="string" cardinality="1" default="Persistent" />
 		<field name="exchangeName" type="string" cardinality="1" />
 		<field name="publishQueueName" type="string" cardinality="1" />	
-		<field name="contentType" type="string" cardinality="1" default="application/json" />
-		<field name="timeout" type="string" cardinality="1" default="1000"/>		
-		<field name="attributeName" type="string" cardinality="1" />
+		<field name="contentType" type="string" cardinality="1" default="application/json" />				
+		<field name="userRole" type="string" cardinality="1" />
 		<field name="user" type="string" cardinality="1" />		
-		<field name="userRole" type="string" cardinality="1" />		
+		<field name="attributeName" type="string" cardinality="1" />						
 	</entityType>
 
 	<!-- Internationalization for logging / audit trail -->

@@ -94,7 +94,7 @@ public class AMQPSyncRequestReplyProcessor extends MessageProcessor {
 			this.connection = factory.newConnection("API Gateway One");
 			// channel = connection.createChannel();
 		} catch (IOException | TimeoutException e) {
-			Trace.info("Error during factory.newConnection(): " + e);			
+			Trace.debug("Error during factory.newConnection(): " + e);			
 		}
 
 	}
@@ -105,13 +105,13 @@ public class AMQPSyncRequestReplyProcessor extends MessageProcessor {
 		String corrId = UUID.randomUUID().toString();
 		String body = this.attributeName.substitute(message);
 
-		Trace.info("replyQueueType: " + replyQueueType);
+		Trace.debug("replyQueueType: " + replyQueueType);
 		if (this.replyQueueType.equals("NamedQueue")) {
 			return namedQueueProcessor(message, corrId, body);
 		} else if (this.replyQueueType.equals("TemporaryQueue")) {
 			return tempQueueProcessor(message, corrId, body);
 		} else {
-			Trace.info("Unknown queue type");
+			Trace.debug("Unknown queue type");
 			return false;
 		}
 
@@ -120,7 +120,7 @@ public class AMQPSyncRequestReplyProcessor extends MessageProcessor {
 	private boolean namedQueueProcessor(Message message, String corrId, String body) {
 
 		try {
-			Trace.info("Publishing");
+			Trace.debug("Publishing");
 			
 			if (this.connection == null) {
 				Trace.error("No connection open. Aborting the circuit");
@@ -129,7 +129,7 @@ public class AMQPSyncRequestReplyProcessor extends MessageProcessor {
 			
 			if (!this.connection.isOpen()) {
 				try {
-					Trace.info("No connection open. Creating new connection");
+					Trace.debug("No connection open. Creating new connection");
 					this.connection = factory.newConnection("API Gateway One");
 				} catch (IOException | TimeoutException e ) {
 					Trace.error("Error during factory.newConnection(): " + e);
@@ -149,20 +149,20 @@ public class AMQPSyncRequestReplyProcessor extends MessageProcessor {
 
 			publishChannel.close();
 		} catch (IOException | TimeoutException e) {
-			Trace.info("Error during publish: " + e);
+			Trace.debug("Error during publish: " + e);
 			return false;
 		}
 
 		try {
 
-			Trace.info("Consuming from named queue");
+			Trace.debug("Consuming from named queue");
 
 			if (!this.connection.isOpen()) {
 				try {
-					Trace.info("No connection open. Creating new connection");
+					Trace.debug("No connection open. Creating new connection");
 					this.connection = factory.newConnection("API Gateway One");
 				} catch (IOException | TimeoutException e) {
-					Trace.info("Error during factory.newConnection(): " + e);
+					Trace.debug("Error during factory.newConnection(): " + e);
 				}
 			}
 
@@ -190,15 +190,15 @@ public class AMQPSyncRequestReplyProcessor extends MessageProcessor {
 				response ="Timeout";
 			}
 			
-			Trace.info("[x] Sent correlationId " + corrId + "[x] Received: " + response);
+			Trace.debug("[x] Sent correlationId " + corrId + "[x] Received: " + response);
 			message.put("amqp.msg", response);
 			consumeChannel.close();
 
 		} catch (IOException | InterruptedException | TimeoutException e) {
-			Trace.info("Error during consume: " + e);
+			Trace.debug("Error during consume: " + e);
 			return false;
 		} catch (ShutdownSignalException e1) {
-			Trace.info("ShutdownSignalException during consume: " + e1);
+			Trace.debug("ShutdownSignalException during consume: " + e1);
 		}
 
 		return true;
@@ -207,15 +207,15 @@ public class AMQPSyncRequestReplyProcessor extends MessageProcessor {
 	private boolean tempQueueProcessor(Message message, String corrId, String body) {
 
 		try {
-			Trace.info("Publishing and consuming using temporary reply queue");
-			Trace.info("Publishing");
+			Trace.debug("Publishing and consuming using temporary reply queue");
+			Trace.debug("Publishing");
 
 			if (!this.connection.isOpen()) {
 				try {
-					Trace.info("No connection open. Creating new connection");
+					Trace.debug("No connection open. Creating new connection");
 					this.connection = factory.newConnection("API Gateway One");
 				} catch (IOException | TimeoutException e) {
-					Trace.info("Error during factory.newConnection(): " + e);
+					Trace.debug("Error during factory.newConnection(): " + e);
 				}
 			}
 
@@ -229,7 +229,7 @@ public class AMQPSyncRequestReplyProcessor extends MessageProcessor {
 			channel.basicPublish(this.exchangeName.getLiteral(), this.requestQueueName.getLiteral(), requestProps,
 					body.getBytes("UTF-8"));
 
-			Trace.info("Consuming from temp queue");
+			Trace.debug("Consuming from temp queue");
 
 			final BlockingQueue<String> blockingQueue = new ArrayBlockingQueue<String>(1);
 			boolean autoAck = true;
@@ -251,10 +251,10 @@ public class AMQPSyncRequestReplyProcessor extends MessageProcessor {
 
 			channel.close();
 		} catch (IOException | InterruptedException | TimeoutException e) {
-			Trace.info("Error during publish/consume: " + e);
+			Trace.debug("Error during publish/consume: " + e);
 			return false;
 		} catch (ShutdownSignalException e1) {
-			Trace.info("ShutdownSignalException during publish/consume: " + e1);
+			Trace.debug("ShutdownSignalException during publish/consume: " + e1);
 		}
 
 		return true;
