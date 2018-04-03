@@ -102,10 +102,10 @@ public class AMQPConsumeProcessor extends MessageProcessor {
 			Trace.debug("Consuming from named queue");
 			boolean autoAck;
 			
-			if (this.connection == null) {
+	/*		if (this.connection == null) {
 				Trace.error("No connection open. Aborting the circuit");
 				return false;
-			}
+			} */
 			
 			
 			if (!this.connection.isOpen()) {
@@ -177,6 +177,18 @@ public class AMQPConsumeProcessor extends MessageProcessor {
 	
 		return true;
 	} 
+	
+	
+	@Override
+    public void filterDetached() {
+		 // clean up 
+		  Trace.debug("Closing AMQP connection");
+		  try {
+				this.connection.close();				
+			} catch (IOException e) {
+				Trace.debug("Error while closing connection " + e);
+			} 		  
+	  }
 }
 
 	

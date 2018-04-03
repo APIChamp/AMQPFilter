@@ -122,10 +122,10 @@ public class AMQPSyncRequestReplyProcessor extends MessageProcessor {
 		try {
 			Trace.debug("Publishing");
 			
-			if (this.connection == null) {
+		/*	if (this.connection == null) {
 				Trace.error("No connection open. Aborting the circuit");
 				return false;
-			}
+			} */
 			
 			if (!this.connection.isOpen()) {
 				try {
@@ -259,5 +259,16 @@ public class AMQPSyncRequestReplyProcessor extends MessageProcessor {
 
 		return true;
 	}
-
+	
+	@Override
+    public void filterDetached() {
+		 // clean up 
+		  Trace.debug("Closing AMQP connection");
+		  try {
+				this.connection.close();				
+			} catch (IOException e) {
+				Trace.debug("Error while closing connection " + e);
+			} 		  
+	  }
+    
 }
