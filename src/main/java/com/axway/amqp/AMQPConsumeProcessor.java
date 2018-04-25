@@ -34,7 +34,7 @@ public class AMQPConsumeProcessor extends MessageProcessor {
 	// private Selector<String> timeout;
 	private Selector<String> username;
 	
-	private String password;
+	
 	//private String replyQueueType;
 
 	// boolean deliveryModeFlag = false;
@@ -49,15 +49,8 @@ public class AMQPConsumeProcessor extends MessageProcessor {
 	public void filterAttached(ConfigContext ctx, com.vordel.es.Entity entity) throws EntityStoreException {
 		super.filterAttached(ctx, entity);
 		this.hostname = new Selector<String>(entity.getStringValue("hostname"), String.class);
-		byte[] passwordBytes = entity.getEncryptedValue("password");
-		if (passwordBytes != null) {
-			try {
-				passwordBytes = ctx.getCipher().decrypt(passwordBytes);
-			} catch (GeneralSecurityException exp) {
-				Trace.error(exp);
-			}
-		}
-		this.password = new String(passwordBytes);
+		
+		//this.password = new String(passwordBytes);
 		this.username = new Selector<String>(entity.getStringValue("username"), String.class);
 		this.queueName = new Selector<String>(entity.getStringValue("queueName"), String.class);
 		this.timeout = new Selector<String>(entity.getStringValue("timeout"), String.class);
@@ -71,14 +64,23 @@ public class AMQPConsumeProcessor extends MessageProcessor {
 		factory.setPort(Integer.parseInt(this.port.getLiteral().trim()));
 		if (this.username != null) {
 			factory.setUsername(this.username.getLiteral());
-			factory.setPassword(this.password);
+			//factory.setPassword(this.password);
 		}
-
+		byte[] passwordBytes = entity.getEncryptedValue("password");
+		if (passwordBytes != null) {
+			try {
+				factory.setPassword(new String(ctx.getCipher().decrypt(passwordBytes)));
+				//passwordBytes = ctx.getCipher().decrypt(passwordBytes);
+			} catch (GeneralSecurityException exp) {
+				Trace.error(exp);
+			}
+		}
+		
 		try {
 			this.connection = factory.newConnection("API Gateway - AMQP Consume");
 			// channel = connection.createChannel();
 		} catch (IOException | TimeoutException e) {
-			Trace.debug("Error during factory.newConnection(): " + e);			
+			Trace.error("Error during factory.newConnection(): " + e);			
 		}
 
 	}
@@ -108,12 +110,12 @@ public class AMQPConsumeProcessor extends MessageProcessor {
 			} */
 			
 			
-			if (!this.connection.isOpen()) {
+			if ((this.connection == null) || (!this.connection.isOpen())) {
 				try {
 					Trace.debug("No connection open. Creating new connection");
 					this.connection = factory.newConnection("API Gateway - AMQP Consume");
 				} catch (IOException | TimeoutException e) {
-					Trace.debug("Error during factory.newConnection(): " + e);
+					Trace.error("Error during factory.newConnection(): " + e);
 					return false;
 				}
 			}
@@ -169,10 +171,10 @@ public class AMQPConsumeProcessor extends MessageProcessor {
 			consumeChannel.close();
 
 		} catch (IOException | InterruptedException | TimeoutException e) {
-			Trace.debug("Error during consume: " + e);
+			Trace.error("Error during consume: " + e);
 			return false;
 		} catch (ShutdownSignalException e1) {
-			Trace.debug("ShutdownSignalException during consume: " + e1);
+			Trace.error("ShutdownSignalException during consume: " + e1);
 		}
 	
 		return true;
@@ -184,9 +186,11 @@ public class AMQPConsumeProcessor extends MessageProcessor {
 		 // clean up 
 		  Trace.debug("Closing AMQP connection");
 		  try {
-				this.connection.close();				
+			if ((this.connection != null) || (this.connection.isOpen())) {	
+			  this.connection.close();	
+			}
 			} catch (IOException e) {
-				Trace.debug("Error while closing connection " + e);
+				Trace.error("Error while closing connection " + e);
 			} 		  
 	  }
 }

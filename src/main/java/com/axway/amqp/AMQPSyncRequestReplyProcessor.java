@@ -40,9 +40,7 @@ public class AMQPSyncRequestReplyProcessor extends MessageProcessor {
     private Selector<String> timeout;
 	private Selector<String> username;
 	private Selector<String> attributeName;
-	private Selector<String> contentType;
-
-	private String password;
+	private Selector<String> contentType;	
 	private String replyQueueType;
 	
 	// boolean deliveryModeFlag = false;
@@ -56,17 +54,9 @@ public class AMQPSyncRequestReplyProcessor extends MessageProcessor {
 	@Override
 	public void filterAttached(ConfigContext ctx, com.vordel.es.Entity entity) throws EntityStoreException {
 		super.filterAttached(ctx, entity);
-		this.hostname = new Selector<String>(entity.getStringValue("hostname"), String.class);
-		byte[] passwordBytes = entity.getEncryptedValue("password");
-		if (passwordBytes != null) {
-			try {
-				passwordBytes = ctx.getCipher().decrypt(passwordBytes);
-			} catch (GeneralSecurityException exp) {
-				Trace.error(exp);
-			}
-		}
+		this.hostname = new Selector<String>(entity.getStringValue("hostname"), String.class);	
 		
-		this.password = new String(passwordBytes);
+		//this.password = new String(passwordBytes);
 		this.username = new Selector<String>(entity.getStringValue("username"), String.class);
 		this.vhost = new Selector<String>(entity.getStringValue("vhost"), String.class);
 		this.exchangeName = new Selector<String>(entity.getStringValue("exchangeName"), String.class);
@@ -81,20 +71,28 @@ public class AMQPSyncRequestReplyProcessor extends MessageProcessor {
 		this.timeout = new Selector<String>(entity.getStringValue("timeout"), String.class);
 		
 		// ConnectionFactory factory = new ConnectionFactory();
-		this.factory = new ConnectionFactory();
+		this.factory = new ConnectionFactory();		
 		factory.setHost(this.hostname.getLiteral());
 		factory.setPort(Integer.parseInt(this.port.getLiteral().trim()));
 		factory.setVirtualHost(this.vhost.getLiteral());
 		if (this.username != null) {
 			factory.setUsername(this.username.getLiteral());
-			factory.setPassword(this.password);
+			//factory.setPassword(this.password);
 		}
-
+		byte[] passwordBytes = entity.getEncryptedValue("password");
+		if (passwordBytes != null) {
+			try {
+				factory.setPassword(new String(ctx.getCipher().decrypt(passwordBytes)));
+				//passwordBytes = ctx.getCipher().decrypt(passwordBytes);
+			} catch (GeneralSecurityException exp) {
+				Trace.error(exp);
+			}
+		}
 		try {
 			this.connection = factory.newConnection("API Gateway One");
 			// channel = connection.createChannel();
 		} catch (IOException | TimeoutException e) {
-			Trace.debug("Error during factory.newConnection(): " + e);			
+			Trace.error("Error during factory.newConnection(): " + e);			
 		}
 
 	}
@@ -127,7 +125,7 @@ public class AMQPSyncRequestReplyProcessor extends MessageProcessor {
 				return false;
 			} */
 			
-			if (!this.connection.isOpen()) {
+			if ((this.connection == null) || (!this.connection.isOpen())) {
 				try {
 					Trace.debug("No connection open. Creating new connection");
 					this.connection = factory.newConnection("API Gateway One");
@@ -149,7 +147,7 @@ public class AMQPSyncRequestReplyProcessor extends MessageProcessor {
 
 			publishChannel.close();
 		} catch (IOException | TimeoutException e) {
-			Trace.debug("Error during publish: " + e);
+			Trace.error("Error during publish: " + e);
 			return false;
 		}
 
@@ -157,12 +155,12 @@ public class AMQPSyncRequestReplyProcessor extends MessageProcessor {
 
 			Trace.debug("Consuming from named queue");
 
-			if (!this.connection.isOpen()) {
+			if ((this.connection == null) ||(!this.connection.isOpen())) {
 				try {
 					Trace.debug("No connection open. Creating new connection");
 					this.connection = factory.newConnection("API Gateway One");
 				} catch (IOException | TimeoutException e) {
-					Trace.debug("Error during factory.newConnection(): " + e);
+					Trace.error("Error during factory.newConnection(): " + e);
 				}
 			}
 
@@ -195,10 +193,10 @@ public class AMQPSyncRequestReplyProcessor extends MessageProcessor {
 			consumeChannel.close();
 
 		} catch (IOException | InterruptedException | TimeoutException e) {
-			Trace.debug("Error during consume: " + e);
+			Trace.error("Error during consume: " + e);
 			return false;
 		} catch (ShutdownSignalException e1) {
-			Trace.debug("ShutdownSignalException during consume: " + e1);
+			Trace.error("ShutdownSignalException during consume: " + e1);
 		}
 
 		return true;
@@ -215,7 +213,7 @@ public class AMQPSyncRequestReplyProcessor extends MessageProcessor {
 					Trace.debug("No connection open. Creating new connection");
 					this.connection = factory.newConnection("API Gateway One");
 				} catch (IOException | TimeoutException e) {
-					Trace.debug("Error during factory.newConnection(): " + e);
+					Trace.error("Error during factory.newConnection(): " + e);
 				}
 			}
 
@@ -251,10 +249,10 @@ public class AMQPSyncRequestReplyProcessor extends MessageProcessor {
 
 			channel.close();
 		} catch (IOException | InterruptedException | TimeoutException e) {
-			Trace.debug("Error during publish/consume: " + e);
+			Trace.error("Error during publish/consume: " + e);
 			return false;
 		} catch (ShutdownSignalException e1) {
-			Trace.debug("ShutdownSignalException during publish/consume: " + e1);
+			Trace.error("ShutdownSignalException during publish/consume: " + e1);
 		}
 
 		return true;
@@ -265,9 +263,11 @@ public class AMQPSyncRequestReplyProcessor extends MessageProcessor {
 		 // clean up 
 		  Trace.debug("Closing AMQP connection");
 		  try {
-				this.connection.close();				
+			if ((this.connection != null) || (this.connection.isOpen())) {	
+			  this.connection.close();	
+			}
 			} catch (IOException e) {
-				Trace.debug("Error while closing connection " + e);
+				Trace.error("Error while closing connection " + e);
 			} 		  
 	  }
     
