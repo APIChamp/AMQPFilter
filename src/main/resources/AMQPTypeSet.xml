@@ -3,6 +3,6 @@
     <typedoc file="AMQPFilterDesc.xml" />
     <typedoc file="AMQPPublishFilterDesc.xml" />
     <typedoc file="AMQPConsumeFilterDesc.xml" />
-    <typedoc file="AMQPLoadableModule.xml" />
-    <typedoc file="AMQPExternalConnectionDesc.xml" />    
+   <!-- <typedoc file="AMQPLoadableModule.xml" />
+    <typedoc file="AMQPExternalConnectionDesc.xml" />   --> 
 </typeSet>

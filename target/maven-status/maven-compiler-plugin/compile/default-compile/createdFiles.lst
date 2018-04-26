@@ -5,6 +5,7 @@ com\axway\amqp\AMQPSyncRequestReplyProcessor$1.class
 com\axway\amqp\AMQPPublishFilter.class
 com\axway\amqp\AMQPSyncRequestReplyProcessor.class
 com\axway\amqp\AMQPConsumeFilter.class
+com\axway\amqp\NameValueDialog.class
 com\axway\amqp\AMQPPublishProcessor.class
 com\axway\amqp\AMQPSyncRequestReplyFilter.class
 com\axway\amqp\AMQPConsumeFilterUI.class

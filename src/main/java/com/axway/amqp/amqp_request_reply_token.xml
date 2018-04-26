@@ -1,7 +1,8 @@
 <ui>
-	<panel columns="1">
+ 	 <scrollpanel>
+ 	<panel columns="1">
 		<NameAttribute />
-
+    
 		<group label="AMQP_CONNECTION_SETTINGS_LABEL" columns="2" span="2"
 			fill="false">
 			<TextAttribute field="hostname" label="hostname_LABEL"
@@ -16,7 +17,7 @@
 				displayName="password_LABEL_DISP_NAME" />
 		</group>
 
-		<group label="AMQP_REQUEST_SETTINGS_LABEL" columns="2" span="2"
+ 		<group label="AMQP_REQUEST_SETTINGS_LABEL" columns="2" span="2"
 			fill="false">
 			<ComboAttribute field="deliveryMode"
 				label="AMQP_CONSUMER_DESTINATION_TYPE_LABEL" contentSource="com.axway.amqp.AMQPSyncRequestReplyFilterPage.deliveryModes"
@@ -27,15 +28,22 @@
 				displayName="requestQueueName_LABEL_DISP_NAME" />
 			<TextAttribute field="contentType" label="contentType_LABEL"
 				displayName="contentType_LABEL_DISP_NAME" />
-			<TextAttribute field="userRole" label="userRole_LABEL"
+<!--  			<TextAttribute field="userRole" label="userRole_LABEL"
 				displayName="userRole_LABEL_DISP_NAME" />
 			<TextAttribute field="user" label="user_LABEL"
-				displayName="user_LABEL_DISP_NAME" />		
+				displayName="user_LABEL_DISP_NAME" />	-->	
 			<TextAttribute field="attributeName" label="AMQP_MESSAGE_ATTRIBUTE_NAME"
-				required="false" clearValueWhenDisabled="false" />
-            <text label="MESSAGE_PROPERTIES" readOnly="true"/>
-							
-		</group>
+				required="false" clearValueWhenDisabled="false" />            						
+		</group> 
+		
+  <group label="MESSAGE_PROPERTIES" columns="2" span="2" fill="false">
+     <TablePage type="Property" tableHeight="150"
+       dialogClass="com.axway.amqp.NameValueDialog"
+       columnProperties="name,value" sortColumns="name,value"
+       columnResources="PROPNAME_LABEL,PROPVALUE_LABEL" columnWidths="300,200"
+       deleteText="DELETE_VARIABLE_CONFIRMATION"
+       dialog.setFlavor="properties_variable_dialog.xml" />
+    </group>
 
 		<group label="AMQP_REPLY_SETTINGS_LABEL" columns="2" span="2"
 			fill="false">
@@ -48,4 +56,5 @@
 		</group>
 
 	</panel>
+	 </scrollpanel>
 </ui>

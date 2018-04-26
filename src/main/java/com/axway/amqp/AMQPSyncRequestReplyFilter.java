@@ -10,6 +10,7 @@ import com.vordel.mime.HeaderSet;
 public class AMQPSyncRequestReplyFilter extends DefaultFilter {
 
 	protected final void setDefaultPropertyDefs() {
+		//super.setDefaultPropertyDefs();
 		this.reqProps.add(new PropDef("content.body", Body.class));
 		this.reqProps.add(new PropDef("http.headers", HeaderSet.class));
 	}
