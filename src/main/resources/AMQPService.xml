@@ -1,0 +1,23 @@
+<!-- This type defines a AMQP Configuration which can be used 
+     for outgoing connections via AMQP category filters
+
+     "host" - host to be used for the connection
+     "port" - port to be used for the connection
+     "virtualhost" - virtualhost to be used for the connection
+     "username" - username to be used for the connection
+     "password" - password to be used for the connection
+
+-->
+<entityStoreData>
+	<entityType name="AMQPService" extends="Entity">
+    <constant name="_version" type="integer" value="1"/>
+
+    <field name="name" type="string" cardinality="1" isKey="true"/>
+    <field name="host" type="string" cardinality="1" />
+    <field name="port" type="string" cardinality="1" />
+    <field name="virtualhost" type="string" cardinality="1" />
+    <field name="username" type="string" cardinality="?" />
+    <field name="password" type="encrypted" cardinality="?" />
+    <field name="scheme" type="string" cardinality="1" default="HTTP"/>
+  </entityType>
+</entityStoreData>

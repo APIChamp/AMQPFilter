@@ -1,0 +1,4 @@
+<typeSet>
+   <typedoc file="AMQPServiceGroup.xml" />
+   <typedoc file="AMQPService.xml" />  
+</typeSet>

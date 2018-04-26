@@ -26,7 +26,8 @@ public class NameValueDialog extends EntityContextAdapterDialog{
     public NameValueDialog(Shell parentShell, Manager manager, EntityType type,
             KeyHolder parentKeyHolder) {
         super(parentShell, "ADD_PARAMETER", manager, type, parentKeyHolder);
-    }
+    }   
+    
     
     @Override
     protected String getFlavor() {

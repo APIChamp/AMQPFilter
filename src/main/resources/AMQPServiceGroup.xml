@@ -1,0 +1,18 @@
+<!-- This type defines a grouping of AMQP Configurations which can be used 
+     for outgoing connections via AMQP category filters
+-->
+<entityStoreData>
+	<entityType name="AMQPServiceGroup" extends="NamedLoadableModule">
+    <constant name="_version" type="integer" value="1"/>
+    <constant name="class" type="string" value="com.axway.amqp.AMQPServiceGroup"/>
+    <constant name="loadorder" type="integer" value="500"/>
+
+    <componentType name="AMQPService" cardinality="*"/>
+	</entityType>
+  
+	<entity type="AMQPServiceGroup">
+		<fval name="name">
+            <value>AMQP Service</value>
+        </fval>
+	</entity>	
+</entityStoreData>

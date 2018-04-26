@@ -2,22 +2,15 @@ package com.axway.amqp;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
-
 import java.util.concurrent.TimeoutException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.UUID;
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.BlockingQueue;
-
 import com.rabbitmq.client.ConnectionFactory;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.Channel;
-import com.rabbitmq.client.DefaultConsumer;
 import com.rabbitmq.client.AMQP;
-import com.rabbitmq.client.Envelope;
-import com.rabbitmq.client.ShutdownSignalException;
 import com.vordel.circuit.CircuitAbortException;
 import com.vordel.circuit.Message;
 import com.vordel.circuit.MessageProcessor;
@@ -28,8 +21,6 @@ import com.vordel.es.EntityStoreException;
 import com.vordel.trace.Trace;
 import com.vordel.es.ESPK;
 import com.vordel.es.Entity;
-import com.vordel.es.EntityStore;
-import com.vordel.es.EntityStoreException;
 import com.vordel.es.EntityType;
 
 public class AMQPPublishProcessor extends MessageProcessor {
