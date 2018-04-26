@@ -5,6 +5,7 @@ import java.security.GeneralSecurityException;
 
 import java.util.concurrent.TimeoutException;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ArrayBlockingQueue;
@@ -25,6 +26,11 @@ import com.vordel.config.ConfigContext;
 import com.vordel.el.Selector;
 import com.vordel.es.EntityStoreException;
 import com.vordel.trace.Trace;
+import com.vordel.es.ESPK;
+import com.vordel.es.Entity;
+import com.vordel.es.EntityStore;
+import com.vordel.es.EntityStoreException;
+import com.vordel.es.EntityType;
 
 public class AMQPPublishProcessor extends MessageProcessor {
 
@@ -46,6 +52,9 @@ public class AMQPPublishProcessor extends MessageProcessor {
 	private Connection connection;
 	private ConnectionFactory factory;
 
+	//parameter for custom message properties
+	protected HashMap<Selector<String>, Selector<String>> parameters = new HashMap<Selector<String>, Selector<String>>();
+		
 	public AMQPPublishProcessor() {
 		// TODO Auto-generated constructor stub
 	}
@@ -61,11 +70,20 @@ public class AMQPPublishProcessor extends MessageProcessor {
 		this.exchangeName = new Selector<String>(entity.getStringValue("exchangeName"), String.class);
 		this.publishQueueName = new Selector<String>(entity.getStringValue("publishQueueName"), String.class);
 		this.port = new Selector<String>(entity.getStringValue("port"), String.class);
-		this.user = new Selector<String>(entity.getStringValue("user"), String.class);
-		this.userRole = new Selector<String>(entity.getStringValue("userRole"), String.class);
+		//this.user = new Selector<String>(entity.getStringValue("user"), String.class);
+		//this.userRole = new Selector<String>(entity.getStringValue("userRole"), String.class);
 		this.attributeName = new Selector<String>(entity.getStringValue("attributeName"), String.class);
 		this.contentType = new Selector<String>(entity.getStringValue("contentType"), String.class);
 
+		// get additional paramaters
+        EntityType entityType = ctx.getTypeForName("Property");
+        for (ESPK child : ctx.listChildren(entity.getPK(), entityType)) {
+            Entity p = ctx.getEntity(child);
+            Selector<String> name = new Selector<String>(p.getStringValue("name"), String.class);
+            Selector<String> value = new Selector<String>(p.getStringValue("value"), String.class);
+            parameters.put(name, value);
+        }        
+        
 		// ConnectionFactory factory = new ConnectionFactory();
 		this.factory = new ConnectionFactory();
 		factory.setHost(this.hostname.getLiteral());
@@ -126,8 +144,23 @@ public class AMQPPublishProcessor extends MessageProcessor {
 			Channel publishChannel = this.connection.createChannel();
 			Trace.debug("Channel created");
 			Map<String, Object> HOAccess = new HashMap<String, Object>();
-			HOAccess.put("user", this.user.substitute(message));
-			HOAccess.put("role", this.userRole.substitute(message));
+		//	HOAccess.put("user", this.user.substitute(message));
+		//	HOAccess.put("role", this.userRole.substitute(message));
+			if (this.parameters != null) {
+	            Iterator<Selector<String>> names = this.parameters.keySet().iterator();
+	            while (names.hasNext()) {
+	                Selector<String> name = names.next();
+	                Selector<String> value = this.parameters.get(name);
+	                String nameSub = name.substitute(message);
+	                String valueSub = value.substitute(message);
+	                if (nameSub != null) {
+	                	if (valueSub == null )
+	                		valueSub ="";
+	                	
+	                	HOAccess.put(nameSub, valueSub);
+	                }
+	            }
+	        }
 			AMQP.BasicProperties requestProps = new AMQP.BasicProperties.Builder().correlationId(corrId)
 					.contentType(this.contentType.getLiteral()).headers(HOAccess).build();
 	    	
