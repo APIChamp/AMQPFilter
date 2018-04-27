@@ -13,4 +13,5 @@ com\axway\amqp\AMQPPublishFilterPage.class
 com\axway\amqp\AMQPSyncRequestReplyFilterPage.class
 com\axway\amqp\AMQPConsumeProcessor.class
 com\axway\amqp\AMQPConsumeProcessor$1.class
+com\axway\amqp\AMQPLoadableModule.class
 com\axway\amqp\AMQPPublishFilterUI.class

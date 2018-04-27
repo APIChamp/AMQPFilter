@@ -29,8 +29,6 @@ import com.vordel.es.EntityStoreException;
 import com.vordel.trace.Trace;
 import com.vordel.es.ESPK;
 import com.vordel.es.Entity;
-import com.vordel.es.EntityStore;
-import com.vordel.es.EntityStoreException;
 import com.vordel.es.EntityType;
 
 public class AMQPSyncRequestReplyProcessor extends MessageProcessor {

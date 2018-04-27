@@ -8,7 +8,7 @@ import com.vordel.client.manager.Manager;
 import com.vordel.es.Entity;
 import com.vordel.es.EntityType;
 import com.vordel.es.KeyHolder;
-import com.vordel.trace.Trace;
+
 
 public class NameValueDialog extends EntityContextAdapterDialog{
 	

@@ -4,6 +4,7 @@
 <entityStoreData>
 	<entityType name="AMQPPublishFilter" extends="Filter">
 		<constant name="class" type="string" value="com.axway.amqp.AMQPPublishFilter" />		
+		<componentType name="Property" cardinality="*"/>
 		<field name="hostname" type="string" cardinality="1" />
 		<field name="port" type="string" cardinality="1" default="5672" />
 		<field name="username" type="string" cardinality="1" />
