@@ -176,7 +176,7 @@ public class AMQPPublishProcessor extends MessageProcessor {
 		 // clean up 
 		  Trace.debug("Closing AMQP connection");
 		  try {
-			if ((this.connection != null) || (this.connection.isOpen())) {	
+			if ((this.connection != null) && (this.connection.isOpen())) {	
 			  this.connection.close();	
 			}
 			} catch (IOException e) {
